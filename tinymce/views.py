@@ -42,7 +42,7 @@ def spell_check(request):
             lang = params[0]
             arg = params[1]
         except ValueError:
-            data = QueryDict(raw)
+            data = QueryDict(raw.encode('utf8'))
             method = data.get('method')
             text = data.get('text')
             lang = data.get('lang')
