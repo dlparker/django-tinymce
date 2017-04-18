@@ -56,8 +56,11 @@ def spell_check(request):
         if method == 'spellcheck':
             res = {}
             for word in text.split():
-                if not checker.check(word):
-                    res[word] = checker.suggest(word)
+                tmp = word.encode('utf8').strip()
+                if tmp == '':
+                    continue
+                if not checker.check(tmp):
+                    res[tmp] = checker.suggest(tmp)
             output = dict(words=res)
         else:
             if method == 'checkWords':
