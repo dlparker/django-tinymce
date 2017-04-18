@@ -4,7 +4,7 @@
 import json
 import logging
 
-from django.http import HttpResponse
+from django.http import HttpResponse, QueryDict
 from django.shortcuts import render
 from django.utils.encoding import force_text
 from django.utils.translation import ugettext as _
