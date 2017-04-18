@@ -33,29 +33,44 @@ def spell_check(request):
             raise RuntimeError("install pyenchant for spellchecker functionality")
 
         raw = force_text(request.body)
-        input = json.loads(raw)
-        id = input['id']
-        method = input['method']
-        params = input['params']
-        lang = params[0]
-        arg = params[1]
+        raw = force_text(request.body)
+        try:
+            input = json.loads(raw)
+            id = input['id']
+            method = input['method']
+            params = input['params']
+            lang = params[0]
+            arg = params[1]
+        except ValueError:
+            data = QueryDict(raw)
+            method = data.get('method')
+            text = data.get('text')
+            lang = data.get('lang')
+
 
         if not enchant.dict_exists(str(lang)):
             raise RuntimeError("dictionary not found for language {!r}".format(lang))
 
         checker = enchant.Dict(str(lang))
 
-        if method == 'checkWords':
-            result = [word for word in arg if word and not checker.check(word)]
-        elif method == 'getSuggestions':
-            result = checker.suggest(arg)
+        if method == 'spellcheck':
+            res = {}
+            for word in text.split():
+                if not checker.check(word):
+                    res[word] = checker.suggest(word)
+            output = dict(words=res)
         else:
-            raise RuntimeError("Unknown spellcheck method: {!r}".format(method))
-        output = {
-            'id': id,
-            'result': result,
-            'error': None,
-        }
+            if method == 'checkWords':
+                result = [word for word in arg if word and not checker.check(word)]
+            elif method == 'getSuggestions':
+                result = checker.suggest(arg)
+            else:
+                raise RuntimeError("Unknown spellcheck method: {!r}".format(method))
+            output = {
+                'id': id,
+                'result': result,
+                'error': None,
+            }
     except Exception:
         logging.exception("Error running spellchecker")
         return HttpResponse(_("Error running spellchecker"))
