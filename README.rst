@@ -1,3 +1,10 @@
+Fork of django-tinymce 
+======================
+
+I updated the RPC endpoint to support the 4.x version of tinymce that is used by mezzanine as of April 17 2017. Pretty minor changes, and then it integrates easily into the mezzanine admin pages as expected.
+
+The rest of this file is an unmodified copy of the original.
+
 django-tinymce
 ==============
 
